@@ -58,6 +58,10 @@ animation or external fonts.
 
 ## Automated checks
 
+See [Contributing](CONTRIBUTING.md) for all CI commands and the screenshot
+requirements for user-facing pull requests. GitHub Actions checks application
+tests, code quality, and the production asset build on proposed changes.
+
 ```sh
 bin/rails test
 ```
