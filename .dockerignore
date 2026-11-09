@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+storage/*
+log/*
+tmp/*
+vendor/bundle
+.bundle
+config/*.key
