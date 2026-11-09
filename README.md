@@ -1,9 +1,24 @@
 # Household Food Manager
 
-A mobile-first Rails application for household food management. This foundation
-provides a responsive welcome page, Rails health endpoint, Hotwire (Turbo and
-Stimulus), and SQLite. Food inventory, authentication, deployment, and other
-product features are intentionally not implemented yet.
+A mobile-first Rails application to help a household keep track of food in its
+freezer and make better use of it. The project is being built in phases:
+
+1. **Freezer inventory:** make it easy for a family to see what is stored in the
+   freezer.
+2. **QR labels:** make freezer items easier to identify and manage.
+3. **Meal planning:** help plan meals around food the household has available.
+4. **Scratch cooking:** support preparing meals from those plans.
+
+These are product goals, not a specification of implementation details. This
+repository currently provides the Rails foundation: Hotwire (Turbo and
+Stimulus), SQLite, a responsive welcome page, and a health endpoint. The
+freezer-tracking and later product capabilities are not implemented yet.
+
+See [Contributing](CONTRIBUTING.md) and
+[Copilot instructions](.github/copilot-instructions.md) for guidance on making
+small, reviewable changes. Use the
+[issue template](.github/ISSUE_TEMPLATE/issue.md) to describe a desired outcome
+and its acceptance criteria.
 
 ## Requirements
 
