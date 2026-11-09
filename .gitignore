@@ -1,0 +1,17 @@
+/.bundle/
+/vendor/bundle/
+
+# Ignore key files for decrypting credentials and more.
+/config/*.key
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+!/tmp/pids/
+/tmp/pids/*
+!/tmp/pids/.keep
+/storage/*
+!/storage/.keep
+/public/assets/
+/.env*
+/.DS_Store
