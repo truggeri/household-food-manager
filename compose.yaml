@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    env_file: .env
+    environment:
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: "true"
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      - ./storage:/rails/storage
+    restart: unless-stopped
