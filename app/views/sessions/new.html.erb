@@ -1,0 +1,36 @@
+<div class="page">
+  <header class="site-header">
+    <%= link_to root_path, class: "brand", aria: { label: "Household Food Manager home" } do %>
+      <span class="brand-mark" aria-hidden="true">h.</span>
+      <span>Household<br>Food Manager</span>
+    <% end %>
+  </header>
+
+  <main id="main" class="auth-page">
+    <section class="auth-card" aria-labelledby="sign-in-title">
+      <p class="eyebrow">Your household</p>
+      <h1 id="sign-in-title">Sign in</h1>
+      <p class="form-intro">Use the username and password created for you by a household member.</p>
+
+      <% if flash[:notice] %>
+        <p class="form-notice" role="status"><%= flash[:notice] %></p>
+      <% end %>
+      <% if flash[:alert] %>
+        <p class="form-alert" role="alert"><%= flash[:alert] %></p>
+      <% end %>
+
+      <%= form_with url: session_path, method: :post do |form| %>
+        <div class="field">
+          <%= form.label :username %>
+          <%= form.text_field :username, required: true, autocomplete: "username", autocapitalize: "none", spellcheck: false, autofocus: true %>
+        </div>
+        <div class="field">
+          <%= form.label :password %>
+          <%= form.password_field :password, required: true, autocomplete: "current-password" %>
+        </div>
+        <%= form.submit "Sign in", class: "button" %>
+      <% end %>
+      <p class="form-help">Need access? Ask someone in your household to add your account.</p>
+    </section>
+  </main>
+</div>

@@ -11,8 +11,8 @@ freezer and make better use of it. The project is being built in phases:
 
 These are product goals, not a specification of implementation details. This
 repository currently provides the Rails foundation: Hotwire (Turbo and
-Stimulus), SQLite, a responsive welcome page, and a health endpoint. The
-freezer-tracking and later product capabilities are not implemented yet.
+Stimulus), SQLite, household sign-in and member identity, and a health endpoint.
+The freezer-tracking and later product capabilities are not implemented yet.
 
 See [Contributing](CONTRIBUTING.md) and
 [Copilot instructions](.github/copilot-instructions.md) for guidance on making
@@ -46,6 +46,9 @@ bin/setup
 `bin/setup` installs the locked dependencies, prepares SQLite, and starts the
 development server. Open **http://localhost:3000**. Stop the server with Ctrl-C.
 For other Ruby managers, select Ruby 3.3.9 before running the same setup command.
+The first run requires creating the initial household member from the Rails
+console; follow [Household access and account recovery](docs/household-access.md)
+before signing in. There is no default account or public account registration.
 
 To prepare without starting the server, or to start it again later:
 
@@ -67,9 +70,11 @@ This exposes the development server to your local network: don't use it on an
 untrusted network or expose it to the internet. Use `bin/dev -p 3001` if port
 3000 is already occupied.
 
-The welcome page stacks on narrow screens and switches to two columns at 768px.
-It uses semantic landmarks, a keyboard skip link, visible focus states, and no
-animation or external fonts.
+The sign-in and household member pages adapt to narrow screens and desktop. They
+use semantic landmarks, a keyboard skip link, visible focus states, and no
+animation or external fonts. For initial account creation, adding household
+members, and account recovery, see
+[Household access and account recovery](docs/household-access.md).
 
 ## Backups
 
@@ -86,10 +91,10 @@ tests, code quality, and the production asset build on proposed changes.
 bin/rails test
 ```
 
-The smoke tests request the home page with desktop and mobile browser headers,
-check the responsive viewport and Hotwire entry points, request `/up`, and execute
-a SQLite query. The health endpoint confirms application boot, not database or
-external-service availability.
+The smoke tests request the sign-in page with desktop and mobile browser
+headers, check the responsive viewport and Hotwire entry points, request `/up`,
+and execute a SQLite query. The health endpoint confirms application boot, not
+database or external-service availability.
 
 To check autoloading and the asset build as well:
 
@@ -104,7 +109,10 @@ JavaScript.
 
 ## Structure
 
-- `app/controllers/home_controller.rb` and `app/views/home/index.html.erb`: welcome page.
+- `app/controllers/sessions_controller.rb` and `app/views/sessions/`: sign-in
+  and sign-out.
+- `app/controllers/household_members_controller.rb` and
+  `app/views/household_members/`: household member identity.
 - `app/assets/stylesheets/application.css`: mobile-first styles.
 - `app/javascript/` and `config/importmap.rb`: Turbo and Stimulus setup.
 - `config/database.yml`: SQLite configuration.

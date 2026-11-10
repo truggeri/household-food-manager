@@ -1,0 +1,39 @@
+<div class="page">
+  <header class="site-header">
+    <%= link_to root_path, class: "brand", aria: { label: "Household Food Manager home" } do %>
+      <span class="brand-mark" aria-hidden="true">h.</span>
+      <span>Household<br>Food Manager</span>
+    <% end %>
+    <div class="account-nav">
+      <span>Signed in as <strong><%= current_household_member.name %></strong></span>
+      <%= button_to "Sign out", session_path, method: :delete, class: "text-button" %>
+    </div>
+  </header>
+
+  <main id="main" class="members-page">
+    <% if flash[:notice] %>
+      <p class="form-notice" role="status"><%= flash[:notice] %></p>
+    <% end %>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Your household</p>
+        <h1>Household members</h1>
+      </div>
+      <%= link_to "Add a member", new_household_member_path, class: "button" %>
+    </div>
+    <p class="form-intro">Each person has a separate sign-in, so future food ratings can be connected to the right household member.</p>
+
+    <% if @household_members.any? %>
+      <ul class="member-list">
+        <% @household_members.each do |member| %>
+          <li>
+            <span class="member-mark" aria-hidden="true"><%= member.name.first.upcase %></span>
+            <span><strong><%= member.name %></strong><% if member.id == current_household_member.id %><span class="member-you">You</span><% end %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No household members have been added yet.</p>
+    <% end %>
+  </main>
+</div>
