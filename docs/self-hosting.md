@@ -63,16 +63,14 @@ Stop the app with:
 docker compose down
 ```
 
-To make a consistent database backup, stop the app, copy the database file to a
-safe location, then start the app again:
+To back up the live database without stopping the app:
 
 ```sh
-docker compose stop
-cp storage/production.sqlite3 /path/to/private-backup/production.sqlite3
-docker compose start
+script/backup
 ```
 
-Protect backups as carefully as the live database. To restore one, stop the
-app, replace `storage/production.sqlite3` with the backup, then start the app.
-The database and `.env` are machine-local data and settings; neither should be
-committed to the repository.
+See [Database backups and recovery](backups.md) for prerequisites, scheduled
+off-server backups to Backblaze B2, retention responsibilities, and the restore
+procedure (including handling SQLite WAL files). Protect backups as carefully
+as the live database. The database and `.env` are machine-local data and
+settings; neither should be committed to the repository.

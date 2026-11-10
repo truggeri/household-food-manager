@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+require "bundler/setup"
+require "sqlite3"
+require "fileutils"
+require "securerandom"
+require "timeout"
+
+source_path, directory = ARGV
+source_path ||= "storage/production.sqlite3"
+directory ||= "storage/backups"
+
+begin
+  raise ArgumentError, "Usage: bin/backup [DATABASE [BACKUP_DIRECTORY]]" if ARGV.length > 2
+  raise ArgumentError, "Database does not exist: #{source_path}" unless File.file?(source_path)
+
+  File.umask(0o077)
+  FileUtils.mkdir_p(directory, mode: 0o700)
+  filename = "household-#{Time.now.utc.strftime('%Y%m%dT%H%M%SZ')}-#{SecureRandom.hex(6)}.sqlite3"
+  final_path = File.join(directory, filename)
+  temporary_path = "#{final_path}.partial"
+  source = SQLite3::Database.new(source_path, readonly: true)
+  destination = SQLite3::Database.new(temporary_path)
+  backup = SQLite3::Backup.new(destination, "main", source, "main")
+  deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 60
+
+  loop do
+    result = backup.step(128)
+    break if result == SQLite3::Constants::ErrorCode::DONE
+    unless [ SQLite3::Constants::ErrorCode::OK, SQLite3::Constants::ErrorCode::BUSY,
+             SQLite3::Constants::ErrorCode::LOCKED ].include?(result)
+      raise SQLite3::Exception, "SQLite backup failed (code #{result})"
+    end
+    raise Timeout::Error, "Database stayed busy for 60 seconds; retry the backup" if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+    sleep 0.01
+  end
+
+  backup.finish
+  backup = nil
+  raise SQLite3::Exception, "Backup integrity check failed" unless destination.get_first_value("PRAGMA integrity_check") == "ok"
+
+  destination.close
+  destination = nil
+  File.rename(temporary_path, final_path)
+  warn "Backup saved: #{final_path}"
+  puts final_path
+rescue StandardError => error
+  warn "Backup failed: #{error.message}"
+  exit 1
+ensure
+  backup&.finish
+  destination&.close
+  source&.close
+  FileUtils.rm_f(temporary_path) if temporary_path
+end

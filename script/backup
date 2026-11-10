@@ -1,0 +1,51 @@
+#!/bin/sh
+set -eu
+umask 077
+cd "$(dirname "$0")/.."
+
+case "${1:-}" in
+  "") upload=false ;;
+  --upload-b2) upload=true ;;
+  *) echo "Usage: script/backup [--upload-b2]" >&2; exit 1 ;;
+esac
+if [ "$#" -gt 1 ]; then
+  echo "Usage: script/backup [--upload-b2]" >&2
+  exit 1
+fi
+
+if [ "$upload" = true ]; then
+  : "${B2_BUCKET:?Set B2_BUCKET to the private B2 bucket name}"
+  : "${B2_ENDPOINT_URL:?Set B2_ENDPOINT_URL to the bucket S3-compatible HTTPS endpoint}"
+  : "${AWS_DEFAULT_REGION:?Set AWS_DEFAULT_REGION to the B2 region}"
+  case "$AWS_DEFAULT_REGION" in
+    *[!a-z0-9-]*) echo "AWS_DEFAULT_REGION must be a B2 region name" >&2; exit 1 ;;
+  esac
+  case "$B2_ENDPOINT_URL" in
+    "https://s3.$AWS_DEFAULT_REGION.backblazeb2.com") ;;
+    *) echo "B2_ENDPOINT_URL must be a Backblaze S3-compatible HTTPS endpoint" >&2; exit 1 ;;
+  esac
+  command -v aws >/dev/null 2>&1 || { echo "B2 upload requires AWS CLI on the host" >&2; exit 1; }
+fi
+
+if ! backup=$(docker compose exec -T web bin/backup); then
+  echo "Local backup failed; nothing uploaded" >&2
+  exit 1
+fi
+case "$backup" in
+  storage/backups/household-*.sqlite3) ;;
+  *) echo "Unexpected backup path from container: $backup" >&2; exit 1 ;;
+esac
+if [ ! -f "$backup" ]; then
+  echo "Backup not visible on host: $backup; check the storage bind mount" >&2
+  exit 1
+fi
+echo "Local backup available: $backup"
+
+if [ "$upload" = true ]; then
+  if ! aws --endpoint-url "$B2_ENDPOINT_URL" s3 cp "$backup" \
+    "s3://$B2_BUCKET/household-food-manager/$(basename "$backup")" --only-show-errors; then
+    echo "B2 upload failed; local backup retained: $backup" >&2
+    exit 1
+  fi
+  echo "B2 upload complete: $backup"
+fi

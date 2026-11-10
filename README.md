@@ -71,6 +71,11 @@ The welcome page stacks on narrow screens and switches to two columns at 768px.
 It uses semantic landmarks, a keyboard skip link, visible focus states, and no
 animation or external fonts.
 
+## Backups
+
+For live SQLite backups, Backblaze B2 uploads, and recovery, see
+[Database backups and recovery](docs/backups.md).
+
 ## Automated checks
 
 See [Contributing](CONTRIBUTING.md) for all CI commands and the screenshot
