@@ -127,16 +127,19 @@ needed. This foundation currently has no uploaded-file feature.
    Preserve the old database and sidecars together, then install the backup:
 
    ```sh
-   docker compose stop web
-   saved="storage/before-restore-$(date -u +%Y%m%dT%H%M%SZ)"
-   mkdir -m 700 "$saved"
-   for file in storage/production.sqlite3 storage/production.sqlite3-wal storage/production.sqlite3-shm; do
-     if [ -e "$file" ]; then mv "$file" "$saved/"; fi
-   done
-   cp storage/backups/recovery.sqlite3 storage/production.sqlite3
-   chmod 600 storage/production.sqlite3
-   docker compose up -d web
-   docker compose logs --tail=100 web
+   (
+     set -eu
+     docker compose stop web
+     saved="storage/before-restore-$(date -u +%Y%m%dT%H%M%SZ)"
+     mkdir -m 700 "$saved"
+     for file in storage/production.sqlite3 storage/production.sqlite3-wal storage/production.sqlite3-shm; do
+       if [ -e "$file" ]; then mv "$file" "$saved/"; fi
+     done
+     cp storage/backups/recovery.sqlite3 storage/production.sqlite3
+     chmod 600 storage/production.sqlite3
+     docker compose up -d web
+     docker compose logs --tail=100 web
+   )
    ```
 
    Stop if any command fails. Use a unique preservation directory on every
