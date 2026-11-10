@@ -20,9 +20,11 @@ script/backup
 
 The script runs `docker compose exec -T web bin/backup`. The resulting file is
 under host `storage/backups/`, visible through the existing `/rails/storage`
-bind mount. No SQLite CLI or additional gem is needed. New files are private
-(mode 600); the backup directory is created with mode 700. Run as the deployment
-owner with permission to access Docker and the storage directory.
+bind mount. The script assigns the new file and backup directory to the invoking
+host user so non-root deployment owners can access them. New files remain private
+(mode 600), and the backup directory remains private (mode 700). No SQLite CLI or
+additional gem is needed. Run as the deployment owner with permission to access
+Docker and the storage directory.
 
 Without Docker, use the repository's Ruby and installed bundle:
 

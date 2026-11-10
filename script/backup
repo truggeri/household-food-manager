@@ -35,8 +35,16 @@ case "$backup" in
   storage/backups/household-*.sqlite3) ;;
   *) echo "Unexpected backup path from container: $backup" >&2; exit 1 ;;
 esac
-if [ ! -f "$backup" ]; then
-  echo "Backup not visible on host: $backup; check the storage bind mount" >&2
+backup_directory=${backup%/*}
+host_owner="$(id -u):$(id -g)"
+if ! docker compose exec -T web chown "$host_owner" "$backup_directory" "$backup"; then
+  if [ ! -x "$backup_directory" ] || [ ! -r "$backup" ]; then
+    echo "Could not make backup readable by the host user: $backup" >&2
+    exit 1
+  fi
+fi
+if [ ! -f "$backup" ] || [ ! -r "$backup" ]; then
+  echo "Backup not readable on host: $backup; check the storage bind mount" >&2
   exit 1
 fi
 echo "Local backup available: $backup"

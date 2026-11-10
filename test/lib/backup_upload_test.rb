@@ -12,11 +12,21 @@ class BackupUploadTest < ActiveSupport::TestCase
     @aws_log = "#{@directory}/aws.log"
     @docker_log = "#{@directory}/docker.log"
     write_tool("docker", <<~SH)
-      printf '%s\\n' "$@" > "$DOCKER_LOG"
-      if [ "${FAIL_LOCAL:-0}" = 1 ]; then echo "database failure" >&2; exit 1; fi
-      mkdir -p storage/backups
-      printf 'fake backup' > storage/backups/household-test.sqlite3
-      echo storage/backups/household-test.sqlite3
+      printf '%s\\n' "$*" >> "$DOCKER_LOG"
+      case "$5" in
+        bin/backup)
+          if [ "${FAIL_LOCAL:-0}" = 1 ]; then echo "database failure" >&2; exit 1; fi
+          mkdir -p storage/backups
+          chmod 700 storage/backups
+          printf 'fake backup' > storage/backups/household-test.sqlite3
+          chmod 600 storage/backups/household-test.sqlite3
+          echo storage/backups/household-test.sqlite3
+          ;;
+        chown)
+          chown "$6" "$7" "$8"
+          ;;
+        *) exit 2 ;;
+      esac
     SH
     write_tool("aws", <<~SH)
       printf '%s\\n' "$@" > "$AWS_LOG"
@@ -39,14 +49,23 @@ class BackupUploadTest < ActiveSupport::TestCase
     assert status.success?, error
     assert_match(/Local backup available:/, output)
     assert File.file?(@backup)
+    assert_equal 0o600, File.stat(@backup).mode & 0o777
+    assert_equal 0o700, File.stat(File.dirname(@backup)).mode & 0o777
     assert_not File.exist?(@aws_log)
-    assert_equal %w[compose exec -T web bin/backup], File.readlines(@docker_log, chomp: true)
+    assert_equal [
+      "compose exec -T web bin/backup",
+      "compose exec -T web chown #{Process.uid}:#{Process.gid} storage/backups storage/backups/household-test.sqlite3"
+    ], File.readlines(@docker_log, chomp: true)
   end
 
   test "B2 upload uses the endpoint and a unique backup object key" do
     output, error, status = run_script("--upload-b2")
     assert status.success?, error
     assert_match(/B2 upload complete:/, output)
+    assert_equal [
+      "compose exec -T web bin/backup",
+      "compose exec -T web chown #{Process.uid}:#{Process.gid} storage/backups storage/backups/household-test.sqlite3"
+    ], File.readlines(@docker_log, chomp: true)
     assert_equal [
       "--endpoint-url", @env["B2_ENDPOINT_URL"], "s3", "cp",
       "storage/backups/household-test.sqlite3",
