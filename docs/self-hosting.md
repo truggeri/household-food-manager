@@ -41,6 +41,10 @@ container interfaces. From another device on the same home network, open
 server's LAN IP in its network settings or router. If the page does not load,
 check that the server firewall allows the selected port from your home network.
 
+After startup, create the initial household account using the instructions in
+[Household access and account recovery](household-access.md). Do not expose this
+HTTP service to an untrusted network or the public internet.
+
 ## Updating
 
 From the repository directory on the server, fetch the new version and rebuild:

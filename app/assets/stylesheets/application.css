@@ -39,6 +39,32 @@ h1 { margin: 0; font-size: clamp(2.6rem, 5.2vw, 4.5rem); line-height: 1.08; lett
 .foundation-copy { max-width: 35rem; color: var(--muted); font-size: .95rem; line-height: 1.8; }
 .foundation-copy p { margin: .75rem 0; }
 .site-footer { display: flex; flex-wrap: wrap; gap: .75rem 2rem; justify-content: space-between; padding-block: 1.75rem; font-size: .7rem; color: var(--muted); }
+.auth-page { display: grid; min-height: 65vh; place-items: center; padding-block: 3rem; }
+.auth-card { width: min(100%, 30rem); padding: 2rem; border: 1px solid var(--line); border-radius: 1rem; background: #fff; }
+.auth-card h1, .members-page h1 { margin: 0; font-size: clamp(2.2rem, 5vw, 3rem); }
+.form-intro { color: var(--muted); line-height: 1.7; }
+.field { display: grid; gap: .45rem; margin-block: 1.25rem; }
+.field label { font-size: .875rem; font-weight: 650; }
+.field input { width: 100%; min-height: 2.8rem; padding: .65rem .75rem; border: 1px solid #879488; border-radius: .35rem; background: white; color: var(--ink); font: inherit; }
+.field input:focus-visible, .button:focus-visible, .text-button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.field-help, .form-help { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.6; }
+.button { display: inline-flex; min-height: 2.8rem; align-items: center; justify-content: center; padding: .65rem 1rem; border: 0; border-radius: .35rem; background: var(--ink); color: white; font: inherit; font-size: .9rem; font-weight: 650; text-decoration: none; cursor: pointer; }
+.auth-card form .button { width: 100%; margin-top: .5rem; }
+.text-link { margin-top: 1.25rem; }
+.form-alert, .form-notice { padding: .85rem 1rem; border: 1px solid #9a4a3a; border-radius: .35rem; background: #fff4f1; color: #612c22; line-height: 1.5; }
+.form-notice { border-color: #426b4c; background: #f0f7ef; color: #23472c; }
+.form-alert p { margin: 0 0 .4rem; }
+.form-alert ul { margin-block: .4rem 0; padding-left: 1.25rem; }
+.form-help { margin-top: 1.25rem; }
+.account-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem 1rem; color: var(--muted); font-size: .8rem; text-align: right; }
+.text-button { padding: .5rem; border: 0; background: transparent; color: var(--ink); font: inherit; font-weight: 650; text-decoration: underline; text-underline-offset: .2rem; cursor: pointer; }
+.members-page { padding-block: 3rem; }
+.section-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; }
+.section-heading .eyebrow { margin-bottom: .75rem; }
+.member-list { max-width: 40rem; margin: 2rem 0 0; padding: 0; border-top: 1px solid var(--line); list-style: none; }
+.member-list li { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.member-mark { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border-radius: 50%; background: var(--accent); font-family: Georgia, serif; font-size: 1.25rem; }
+.member-you { margin-left: .5rem; color: var(--muted); font-size: .75rem; }
 
 @media (min-width: 48rem) {
   .page { width: min(100% - 5rem, 72rem); }
@@ -47,4 +73,5 @@ h1 { margin: 0; font-size: clamp(2.6rem, 5.2vw, 4.5rem); line-height: 1.08; lett
   .welcome-card { min-height: 28rem; }
   .foundation { grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; padding-block: 3rem; }
   .foundation-copy p:first-child { margin-top: 0; }
+  .auth-card { padding: 2.5rem; }
 }

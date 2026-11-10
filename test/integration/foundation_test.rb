@@ -7,16 +7,16 @@ class FoundationTest < ActionDispatch::IntegrationTest
   }.freeze
 
   BROWSERS.each do |device, user_agent|
-    test "welcome page loads for a #{device} browser" do
-      get root_url, headers: { "User-Agent" => user_agent }
+    test "sign-in page loads for a #{device} browser" do
+      get new_session_url, headers: { "User-Agent" => user_agent }
 
       assert_response :success
       assert_select "html[lang=en]"
       assert_select "title", "Household Food Manager"
       assert_select "meta[name=viewport][content='width=device-width,initial-scale=1']"
-      assert_select "main#main h1", "A little less waste.A little more ease."
+      assert_select "main#main h1", "Sign in"
       assert_select "a[href='#main']", "Skip to content"
-      assert_select "#foundation", text: /Food management features aren't available yet/
+      assert_select "form[action='#{session_path}']"
       assert_select "script[type=importmap]", text: /@hotwired\/turbo/
       assert_select "script[type=importmap]", text: /@hotwired\/stimulus/
       assert_select "script[type=module]", text: /import "application"/

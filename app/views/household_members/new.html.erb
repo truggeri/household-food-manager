@@ -1,0 +1,50 @@
+<div class="page">
+  <header class="site-header">
+    <%= link_to root_path, class: "brand", aria: { label: "Household Food Manager home" } do %>
+      <span class="brand-mark" aria-hidden="true">h.</span>
+      <span>Household<br>Food Manager</span>
+    <% end %>
+  </header>
+
+  <main id="main" class="auth-page">
+    <section class="auth-card" aria-labelledby="add-member-title">
+      <p class="eyebrow">Your household</p>
+      <h1 id="add-member-title">Add a member</h1>
+      <p class="form-intro">Create an individual sign-in for someone in your household.</p>
+
+      <% if @household_member.errors.any? %>
+        <div class="form-alert" role="alert">
+          <p>Please correct the following:</p>
+          <ul>
+            <% @household_member.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_with model: @household_member do |form| %>
+        <div class="field">
+          <%= form.label :name, "Name" %>
+          <%= form.text_field :name, required: true, maxlength: 80, autocomplete: "name", autofocus: true %>
+        </div>
+        <div class="field">
+          <%= form.label :username %>
+          <%= form.text_field :username, required: true, maxlength: 40, autocomplete: "username", autocapitalize: "none", spellcheck: false %>
+          <p class="field-help">Use letters, numbers, periods, underscores, or hyphens.</p>
+        </div>
+        <div class="field">
+          <%= form.label :password %>
+          <%= form.password_field :password, required: true, minlength: 12, autocomplete: "new-password" %>
+          <p class="field-help">Use at least 12 characters. Share this password privately with the member.</p>
+        </div>
+        <div class="field">
+          <%= form.label :password_confirmation, "Confirm password" %>
+          <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password" %>
+        </div>
+        <%= form.submit "Add household member", class: "button" %>
+      <% end %>
+      <%= link_to "Back to household members", household_members_path, class: "text-link" %>
+    </section>
+  </main>
+</div>
